@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | La Puerta Awards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0A0A0A;
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .admin-header {
+            background: rgba(10, 10, 10, 0.95);
+            border-bottom: 3px solid #FFA500;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .admin-logo i {
+            font-size: 2rem;
+            color: #FFA500;
+        }
+        
+        .admin-logo h1 {
+            font-size: 1.5rem;
+            color: #FFA500;
+            text-transform: uppercase;
+        }
+        
+        .admin-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-name {
+            color: #FFA500;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .user-role {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn {
+            background: #FF4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .logout-btn:hover {
+            background: #CC0000;
+        }
+        
+        .admin-container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+        
+        .admin-sidebar {
+            width: 250px;
+            background: #1A1A1A;
+            border-right: 1px solid #333;
+            padding: 20px 0;
+        }
+        
+        .admin-nav ul {
+            list-style: none;
+        }
+        
+        .admin-nav li {
+            margin-bottom: 5px;
+        }
+        
+        .nav-btn {
+            width: 100%;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: #CCCCCC;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 165, 0, 0.1);
+            color: #FFA500;
+        }
+        
+        .nav-btn.active {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+            border-left: 3px solid #FFA500;
+        }
+        
+        .admin-main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .section-title {
+            color: #FFA500;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .admin-card {
+            background: #1A1A1A;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .admin-table th {
+            background: #FFA500;
+            color: #000;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .admin-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .admin-table tr:hover {
+            background: rgba(255, 165, 0, 0.05);
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 5px;
+        }
+        
+        .btn-approve {
+            background: #44FF44;
+            color: #000;
+        }
+        
+        .btn-reject {
+            background: #FF4444;
+            color: white;
+        }
+        
+        .btn-edit {
+            background: #FFA500;
+            color: #000;
+        }
+        
+        .btn-delete {
+            background: #FF4444;
+            color: white;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: rgba(255, 165, 0, 0.2);
+            color: #FFA500;
+        }
+        
+        .status-approved {
+            background: rgba(68, 255, 68, 0.2);
+            color: #44FF44;
+        }
+        
+        .status-rejected {
+            background: rgba(255, 68, 68, 0.2);
+            color: #FF4444;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #888;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .admin-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+            
+            .admin-nav ul {
+                display: flex;
+                overflow-x: auto;
+                padding: 0 10px;
+            }
+            
+            .admin-nav li {
+                margin: 0;
+                flex-shrink: 0;
+            }
+            
+            .nav-btn {
+                white-space: nowrap;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Шапка админки -->
+    <header class="admin-header">
+        <div class="admin-logo">
+            <i class="fas fa-maracas"></i>
+            <h1>Админ-панель</h1>
+        </div>
+        
+        <div class="admin-user">
+            <div class="user-info">
+                <div class="user-name" id="adminName">Matthew_Evil</div>
+                <div class="user-role" id="adminRole">👑 Создатель сайта</div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </button>
+        </div>
+    </header>
+    
+    <!-- Основной контейнер -->
+    <div class="admin-container">
+        <!-- Боковое меню -->
+        <aside class="admin-sidebar">
+            <nav class="admin-nav">
+                <ul>
+                    <li>
+                        <button class="nav-btn active" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt"></i> Главная
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-section="registrations">
+                            <i class="fas fa-user-clock"></i> Регистрации
+                            <span class="status-badge status-pending" id="pendingCount">0</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-section="users">
+                            <i class="fas fa-users"></i> Пользователи
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-section="categories">
+                            <i class="fas fa-list"></i> Категории
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-section="logs">
+                            <i class="fas fa-clipboard-list"></i> Логи
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-btn" data-section="settings">
+                            <i class="fas fa-cog"></i> Настройки
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="admin-main">
+            <!-- Дашборд -->
+            <section class="admin-section active" id="dashboard">
+                <h2 class="section-title">Главная панель</h2>
+                
+                <div class="admin-card">
+                    <h3 style="color: #FFA500; margin-bottom: 20px;">Общая статистика</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div class="stat-card" style="border-left: 4px solid #FFA500; padding: 15px;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #FFA500;" id="totalUsers">0</div>
+                            <div style="color: #888;">Всего пользователей</div>
+                        </div>
+                        
+                        <div class="stat-card" style="border-left: 4px solid #44FF44; padding: 15px;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #44FF44;" id="activeUsers">0</div>
+                            <div style="color: #888;">Активных</div>
+                        </div>
+                        
+                        <div class="stat-card" style="border-left: 4px solid #FF4444; padding: 15px;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #FF4444;" id="pendingUsers">0</div>
+                            <div style="color: #888;">На проверке</div>
+                        </div>
+                        
+                        <div class="stat-card" style="border-left: 4px solid #888; padding: 15px;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #888;" id="totalVotes">0</div>
+                            <div style="color: #888;">Всего голосов</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-card">
+                    <h3 style="color: #FFA500; margin-bottom: 20px;">Быстрые действия</h3>
+                    
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="action-btn btn-approve" style="padding: 10px 20px;">
+                            <i class="fas fa-plus"></i> Добавить категорию
+                        </button>
+                        
+                        <button class="action-btn btn-edit" style="padding: 10px 20px;">
+                            <i class="fas fa-user-plus"></i> Добавить админа
+                        </button>
+                        
+                        <button class="action-btn" style="padding: 10px 20px; background: #333; color: white;">
+                            <i class="fas fa-download"></i> Экспорт данных
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Регистрации -->
+            <section class="admin-section" id="registrations">
+                <h2 class="section-title">Заявки на регистрацию</h2>
+                
+                <div class="admin-card">
+                    <p style="margin-bottom: 20px; color: #888;">
+                        Здесь отображаются заявки пользователей, ожидающие проверки.
+                        Для каждой заявки можно просмотреть скриншоты паспорта и статистики.
+                    </p>
+                    
+                    <div class="empty-state" id="emptyRegistrations">
+                        <i class="fas fa-user-clock"></i>
+                        <h3>Нет заявок на проверку</h3>
+                        <p>Все пользователи уже обработаны</p>
+                    </div>
+                    
+                    <table class="admin-table" id="registrationsTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Никнейм</th>
+                                <th>Дата подачи</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrationsBody">
+                            <!-- Данные будут загружаться динамически -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Пользователи -->
+            <section class="admin-section" id="users">
+                <h2 class="section-title">Пользователи</h2>
+                
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div>
+                            <input type="text" placeholder="Поиск по нику..." style="padding: 10px; 
+                                   background: #2A2A2A; border: 1px solid #333; color: white; 
+                                   border-radius: 5px; width: 300px;">
+                        </div>
+                        <button class="action-btn btn-edit">
+                            <i class="fas fa-filter"></i> Фильтр
+                        </button>
+                    </div>
+                    
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Никнейм</th>
+                                <th>Статус</th>
+                                <th>Дата регистрации</th>
+                                <th>Последний вход</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Matthew_Evil</td>
+                                <td><span class="status-badge status-approved">Активен</span></td>
+                                <td>02.02.2025</td>
+                                <td>Сейчас</td>
+                                <td>
+                                    <button class="action-btn btn-edit"><i class="fas fa-eye"></i></button>
+                                    <button class="action-btn btn-delete"><i class="fas fa-ban"></i></button>
+                                </td>
+                            </tr>
+                            <!-- Пример данных -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Категории -->
+            <section class="admin-section" id="categories">
+                <h2 class="section-title">Категории голосования</h2>
+                
+                <div class="admin-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="color: #FFA500;">Управление категориями</h3>
+                        <button class="action-btn btn-approve" id="addCategoryBtn">
+                            <i class="fas fa-plus"></i> Добавить категорию
+                        </button>
+                    </div>
+                    
+                    <div id="addCategoryForm" style="display: none; margin-bottom: 20px; padding: 20px; 
+                         background: #2A2A2A; border-radius: 5px;">
+                        <input type="text" placeholder="Название категории" style="width: 100%; padding: 10px; 
+                               margin-bottom: 10px; background: #1A1A1A; border: 1px solid #333; color: white;">
+                        <textarea placeholder="Описание категории" style="width: 100%; padding: 10px; 
+                                  margin-bottom: 10px; background: #1A1A1A; border: 1px solid #333; color: white; 
+                                  min-height: 100px;"></textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="action-btn btn-approve">Сохранить</button>
+                            <button class="action-btn btn-reject" id="cancelCategoryBtn">Отмена</button>
+                        </div>
+                    </div>
+                    
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Описание</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Самый влиятельный человек штата</td>
+                                <td>Игрок с наибольшим влиянием на сервере</td>
+                                <td><span class="status-badge status-approved">Активна</span></td>
+                                <td>
+                                    <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Самая влиятельная семья/организация</td>
+                                <td>Самая сплоченная и влиятельная группировка</td>
+                                <td><span class="status-badge status-approved">Активна</span></td>
+                                <td>
+                                    <button class="action-btn btn-edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Логи -->
+            <section class="admin-section" id="logs">
+                <h2 class="section-title">Логи действий</h2>
+                
+                <div class="admin-card">
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <select style="padding: 8px; background: #2A2A2A; border: 1px solid #333; color: white; border-radius: 5px;">
+                            <option>Все действия</option>
+                            <option>Регистрация</option>
+                            <option>Вход</option>
+                            <option>Голосование</option>
+                        </select>
+                        
+                        <input type="date" style="padding: 8px; background: #2A2A2A; border: 1px solid #333; color: white; border-radius: 5px;">
+                        
+                        <button class="action-btn btn-edit">
+                            <i class="fas fa-filter"></i> Применить
+                        </button>
+                        
+                        <button class="action-btn" style="background: #333; color: white; margin-left: auto;">
+                            <i class="fas fa-download"></i> Экспорт
+                        </button>
+                    </div>
+                    
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Время</th>
+                                <th>Пользователь</th>
+                                <th>Действие</th>
+                                <th>Детали</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>02.02.2025 19:30</td>
+                                <td>Matthew_Evil</td>
+                                <td>Вход в админ-панель</td>
+                                <td>Успешный вход</td>
+                                <td>127.0.0.1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Настройки -->
+            <section class="admin-section" id="settings">
+                <h2 class="section-title">Настройки системы</h2>
+                
+                <div class="admin-card">
+                    <h3 style="color: #FFA500; margin-bottom: 20px;">Основные настройки</h3>
+                    
+                    <div style="display: grid; gap: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #CCC;">Название сайта</label>
+                            <input type="text" value="La Puerta Awards 2025" style="width: 100%; padding: 10px; 
+                                   background: #2A2A2A; border: 1px solid #333; color: white; border-radius: 5px;">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #CCC;">Дата окончания Этапа 1</label>
+                            <input type="datetime-local" style="width: 100%; padding: 10px; 
+                                   background: #2A2A2A; border: 1px solid #333; color: white; border-radius: 5px;">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #CCC;">Дата окончания Этапа 2</label>
+                            <input type="datetime-local" style="width: 100%; padding: 10px; 
+                                   background: #2A2A2A; border: 1px solid #333; color: white; border-radius: 5px;">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #CCC;">Цветовая тема</label>
+                            <input type="color" value="#FFA500" style="width: 100%; height: 40px;">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; display: flex; gap: 15px;">
+                        <button class="action-btn btn-approve" style="padding: 10px 20px;">
+                            <i class="fas fa-save"></i> Сохранить настройки
+                        </button>
+                        
+                        <button class="action-btn btn-reject" style="padding: 10px 20px;">
+                            <i class="fas fa-undo"></i> Сбросить
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="admin-card" style="margin-top: 20px;">
+                    <h3 style="color: #FFA500; margin-bottom: 20px;">Управление администраторами</h3>
+                    
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Логин</th>
+                                <th>Роль</th>
+                                <th>Дата добавления</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Matthew_Evil</td>
+                                <td><span class="status-badge status-approved">Создатель</span></td>
+                                <td>01.01.2025</td>
+                                <td>
+                                    <button class="action-btn btn-edit" disabled>
+                                        <i class="fas fa-crown"></i> Главный
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 20px; padding: 20px; background: #2A2A2A; border-radius: 5px;">
+                        <h4 style="color: #FFA500; margin-bottom: 15px;">Добавить нового администратора</h4>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" placeholder="Логин нового админа" style="flex: 1; padding: 10px; 
+                                   background: #1A1A1A; border: 1px solid #333; color: white;">
+                            <input type="password" placeholder="Пароль" style="flex: 1; padding: 10px; 
+                                   background: #1A1A1A; border: 1px solid #333; color: white;">
+                            <button class="action-btn btn-approve">
+                                <i class="fas fa-user-plus"></i> Добавить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+			// Проверка авторизации
+			if (!localStorage.getItem('adminAuth') || !localStorage.getItem('adminUser')) {
+				alert('Доступ запрещен! Сначала войдите в систему.');
+				window.location.href = 'admin-login.html';
+			}
+
+			// Установка имени администратора
+			document.getElementById('adminName').textContent = localStorage.getItem('adminUser') || 'Администратор';
+			document.getElementById('adminRole').textContent = localStorage.getItem('adminRole') === 'owner' 
+				? '👑 Создатель сайта' 
+				: '⚙️ Администратор';
+
+			// Выход из системы (ИСПРАВЛЕННЫЙ)
+			document.getElementById('logoutBtn').addEventListener('click', function() {
+				if (confirm('Вы уверены, что хотите выйти?')) {
+					// Полностью очищаем все данные
+					localStorage.clear();
+					sessionStorage.clear();
+					
+					// Редирект с очисткой кэша
+					window.location.replace('admin-login.html');
+					// Дополнительный редирект на случай если браузер кэширует
+					setTimeout(() => {
+						window.location.href = 'admin-login.html';
+					}, 100);
+				}
+			});
+
+			// Переключение разделов
+			document.querySelectorAll('.nav-btn').forEach(btn => {
+				btn.addEventListener('click', function() {
+					// Убираем активный класс у всех кнопок
+					document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+					// Убираем активный класс у всех секций
+					document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+					
+					// Добавляем активный класс текущей кнопке
+					this.classList.add('active');
+					
+					// Показываем соответствующую секцию
+					const sectionId = this.getAttribute('data-section');
+					document.getElementById(sectionId).classList.add('active');
+					
+					// Загружаем данные для активной секции
+					loadSectionData(sectionId);
+				});
+			});
+
+			// Функция загрузки данных для секции
+			async function loadSectionData(section) {
+				switch(section) {
+					case 'registrations':
+						await loadRegistrations();
+						break;
+					case 'users':
+						await loadUsers();
+						break;
+					case 'logs':
+						await loadLogs();
+						break;
+				}
+			}
+
+			// Загрузка регистраций
+			async function loadRegistrations() {
+				try {
+					const response = await fetch('/api/registrations');
+					const registrations = await response.json();
+					
+					const tbody = document.getElementById('registrationsBody');
+					const emptyState = document.getElementById('emptyRegistrations');
+					const table = document.getElementById('registrationsTable');
+					
+					tbody.innerHTML = '';
+					
+					if (registrations.length === 0) {
+						emptyState.style.display = 'block';
+						table.style.display = 'none';
+					} else {
+						emptyState.style.display = 'none';
+						table.style.display = 'table';
+						
+						registrations.forEach(reg => {
+							const tr = document.createElement('tr');
+							tr.innerHTML = `
+								<td>${reg.id}</td>
+								<td>${reg.username}</td>
+								<td>${new Date(reg.submittedAt).toLocaleString()}</td>
+								<td>
+									<span class="status-badge ${reg.status === 'pending' ? 'status-pending' : 
+															   reg.status === 'approved' ? 'status-approved' : 
+															   'status-rejected'}">
+										${reg.status === 'pending' ? 'На проверке' : 
+										  reg.status === 'approved' ? 'Одобрена' : 'Отклонена'}
+									</span>
+								</td>
+								<td>
+									${reg.status === 'pending' ? `
+										<button class="action-btn btn-approve" onclick="approveRegistration(${reg.id})">
+											<i class="fas fa-check"></i> Одобрить
+										</button>
+										<button class="action-btn btn-reject" onclick="rejectRegistration(${reg.id})">
+											<i class="fas fa-times"></i> Отклонить
+										</button>
+									` : `
+										<button class="action-btn" disabled style="background: #666; color: white;">
+											Обработано
+										</button>
+									`}
+								</td>
+							`;
+							tbody.appendChild(tr);
+						});
+					}
+					
+					// Обновляем счетчик
+					const pendingCount = registrations.filter(r => r.status === 'pending').length;
+					document.getElementById('pendingCount').textContent = pendingCount;
+					document.getElementById('pendingUsers').textContent = pendingCount;
+					
+				} catch (error) {
+					console.error('Ошибка загрузки регистраций:', error);
+				}
+			}
+
+			// Функции для работы с регистрациями
+			async function approveRegistration(id) {
+				if (confirm('Одобрить эту заявку на регистрацию?')) {
+					try {
+						const response = await fetch(`/api/registration/${id}/approve`, { method: 'POST' });
+						if (response.ok) {
+							alert('Заявка одобрена!');
+							loadRegistrations();
+							updateStats();
+						}
+					} catch (error) {
+						console.error('Ошибка:', error);
+						alert('Ошибка при одобрении заявки');
+					}
+				}
+			}
+
+			async function rejectRegistration(id) {
+				const reason = prompt('Укажите причину отклонения:');
+				if (reason !== null) {
+					try {
+						const response = await fetch(`/api/registration/${id}/reject`, { 
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify({ reason })
+						});
+						if (response.ok) {
+							alert('Заявка отклонена!');
+							loadRegistrations();
+							updateStats();
+						}
+					} catch (error) {
+						console.error('Ошибка:', error);
+						alert('Ошибка при отклонении заявки');
+					}
+				}
+			}
+
+			// Загрузка пользователей
+			async function loadUsers() {
+				try {
+					const response = await fetch('/api/users');
+					const users = await response.json();
+					
+					// Здесь можно добавить отображение пользователей
+					console.log('Пользователи:', users);
+					
+				} catch (error) {
+					console.error('Ошибка загрузки пользователей:', error);
+				}
+			}
+
+			// Загрузка логов
+			async function loadLogs() {
+				try {
+					const response = await fetch('/api/logs');
+					const logs = await response.json();
+					
+					// Здесь можно добавить отображение логов
+					console.log('Логи:', logs);
+					
+				} catch (error) {
+					console.error('Ошибка загрузки логов:', error);
+				}
+			}
+
+			// Кнопка "Фильтр" (ИСПРАВЛЕННАЯ)
+			document.querySelectorAll('.btn-edit').forEach(btn => {
+				if (btn.textContent.includes('Фильтр')) {
+					btn.addEventListener('click', function() {
+						alert('Функция фильтрации будет реализована в следующем обновлении');
+					});
+				}
+			});
+
+			// Управление категориями
+			document.getElementById('addCategoryBtn').addEventListener('click', function() {
+				const form = document.getElementById('addCategoryForm');
+				form.style.display = form.style.display === 'none' ? 'block' : 'none';
+			});
+
+			document.getElementById('cancelCategoryBtn').addEventListener('click', function() {
+				document.getElementById('addCategoryForm').style.display = 'none';
+			});
+
+			// Обновление статистики
+			async function updateStats() {
+				try {
+					const [usersRes, registrationsRes] = await Promise.all([
+						fetch('/api/users'),
+						fetch('/api/registrations')
+					]);
+					
+					const users = await usersRes.json();
+					const registrations = await registrationsRes.json();
+					
+					document.getElementById('totalUsers').textContent = users.length;
+					document.getElementById('activeUsers').textContent = users.filter(u => u.status === 'active').length;
+					document.getElementById('pendingUsers').textContent = registrations.filter(r => r.status === 'pending').length;
+					document.getElementById('totalVotes').textContent = '0'; // Пока нет голосований
+					
+				} catch (error) {
+					console.error('Ошибка обновления статистики:', error);
+				}
+			}
+
+			// Добавление администратора
+			document.querySelectorAll('.action-btn').forEach(btn => {
+				if (btn.textContent.includes('Добавить')) {
+					btn.addEventListener('click', async function() {
+						const loginInput = this.parentElement.querySelector('input[placeholder*="Логин"]');
+						const passwordInput = this.parentElement.querySelector('input[type="password"]');
+						
+						if (loginInput && passwordInput) {
+							const username = loginInput.value.trim();
+							const password = passwordInput.value;
+							
+							if (username && password) {
+								try {
+									const response = await fetch('/api/admins', {
+										method: 'POST',
+										headers: {
+											'Content-Type': 'application/json'
+										},
+										body: JSON.stringify({ username, password })
+									});
+									
+									if (response.ok) {
+										alert(`Администратор ${username} добавлен!`);
+										loginInput.value = '';
+										passwordInput.value = '';
+										updateStats();
+									}
+								} catch (error) {
+									alert('Ошибка при добавлении администратора');
+								}
+							} else {
+								alert('Заполните все поля');
+							}
+						}
+					});
+				}
+			});
+
+			// Удаление администратора (НОВАЯ ФУНКЦИЯ)
+			function addRemoveAdminButton() {
+				const adminRows = document.querySelectorAll('.admin-table tbody tr');
+				adminRows.forEach(row => {
+					const usernameCell = row.cells[0];
+					const actionsCell = row.cells[3];
+					const username = usernameCell.textContent;
+					
+					// Не добавляем кнопку удаления для создателя
+					if (username !== 'Matthew_Evil') {
+						const removeBtn = document.createElement('button');
+						removeBtn.className = 'action-btn btn-delete';
+						removeBtn.innerHTML = '<i class="fas fa-user-minus"></i> Удалить';
+						removeBtn.onclick = async function() {
+							if (confirm(`Удалить администратора ${username}? Это действие нельзя отменить.`)) {
+								try {
+									const response = await fetch(`/api/admins/${username}`, {
+										method: 'DELETE'
+									});
+									
+									if (response.ok) {
+										alert(`Администратор ${username} удален!`);
+										row.remove();
+										updateStats();
+									}
+								} catch (error) {
+									alert('Ошибка при удалении администратора');
+								}
+							}
+						};
+						
+						if (actionsCell) {
+							actionsCell.appendChild(removeBtn);
+						}
+					}
+				});
+			}
+
+			// Инициализация
+			updateStats();
+			loadRegistrations();
+			setTimeout(addRemoveAdminButton, 1000); // Ждем загрузки DOM
+
+			// Автообновление каждые 30 секунд
+			setInterval(() => {
+				updateStats();
+				loadRegistrations();
+			}, 30000);
+
+			// Проверка неактивности
+			let inactivityTimer;
+			function resetInactivityTimer() {
+				clearTimeout(inactivityTimer);
+				inactivityTimer = setTimeout(() => {
+					if (confirm('Сессия будет завершена из-за неактивности. Продолжить?')) {
+						resetInactivityTimer();
+					} else {
+						localStorage.clear();
+						window.location.replace('admin-login.html');
+					}
+				}, 30 * 60 * 1000);
+			}
+
+			document.addEventListener('mousemove', resetInactivityTimer);
+			document.addEventListener('keypress', resetInactivityTimer);
+			resetInactivityTimer();
+
+			// Блокировка кнопки "Назад"
+			history.pushState(null, null, window.location.href);
+			window.onpopstate = function() {
+				history.go(1);
+			};
+        
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        resetInactivityTimer();
+        
+        // Сообщение о разработке
+        console.log('🚀 Админ-панель La Puerta Awards загружена!');
+        console.log('👑 Текущий пользователь:', localStorage.getItem('adminUser'));
+        console.log('🎯 Роль:', localStorage.getItem('adminRole'));
+    </script>
+	<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация | La Puerta Awards</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🥁</div>
+                    <div class="logo-text">
+                        <h1>La Puerta Awards</h1>
+                        <p>Регистрация</p>
+                    </div>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="admin-login.html">Админ</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="section">
+                <h2 class="section-title">Регистрация для голосования</h2>
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <p style="margin-bottom: 20px; color: var(--text-secondary);">
+                        Для участия в голосовании необходимо зарегистрироваться.<br>
+                        Администрация проверит ваши данные в течение 24 часов.
+                    </p>
+                    
+                    <form id="registerForm" style="display: flex; flex-direction: column; gap: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                                Ваш ник в игре (Nick_Name):
+                            </label>
+                            <input type="text" style="width: 100%; padding: 12px; background: var(--dark-card); 
+                                   border: 1px solid var(--dark-border); color: white; border-radius: 6px;"
+                                   placeholder="Пример: John_Doe" required>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                                Скриншот паспорта (из игры):
+                            </label>
+                            <input type="file" accept="image/*" style="width: 100%; padding: 12px; background: var(--dark-card); 
+                                   border: 1px dashed var(--dark-border); color: white; border-radius: 6px;"
+                                   required>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                                Скриншот статистики (из игры):
+                            </label>
+                            <input type="file" accept="image/*" style="width: 100%; padding: 12px; background: var(--dark-card); 
+                                   border: 1px dashed var(--dark-border); color: white; border-radius: 6px;"
+                                   required>
+                        </div>
+                        
+                        <button type="submit" class="btn" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> Отправить на проверку
+                        </button>
+                    </form>
+                    
+                    <div id="registerMessage" style="margin-top: 20px; display: none; padding: 15px; 
+                         border-radius: 6px; text-align: center;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = document.getElementById('registerMessage');
+            message.style.display = 'block';
+            message.style.background = 'rgba(255, 165, 0, 0.1)';
+            message.style.border = '1px solid var(--primary)';
+            message.style.color = 'var(--primary)';
+            message.innerHTML = `
+                <i class="fas fa-check-circle"></i> Заявка отправлена!<br>
+                <small>Ожидайте проверки администрацией. Вы получите уведомление на сайте.</small>
+            `;
+            
+            // Прокручиваем к сообщению
+            message.scrollIntoView({ behavior: 'smooth' });
+        });
+		
+		// Отправка формы регистрации
+		document.getElementById('registerForm').addEventListener('submit', async function(e) {
+			e.preventDefault();
+			
+			const username = document.getElementById('username').value.trim();
+			const passportFile = document.getElementById('passport').files[0];
+			const statsFile = document.getElementById('stats').files[0];
+			
+			if (!username || !passportFile || !statsFile) {
+				alert('Заполните все поля и прикрепите оба скриншота');
+				return;
+			}
+			
+			// Проверка формата ника
+			if (!username.includes('_')) {
+				alert('Ник должен быть в формате: Имя_Фамилия (с нижним подчеркиванием)');
+				return;
+			}
+			
+			// Читаем файлы как base64
+			const toBase64 = file => new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = () => resolve(reader.result);
+				reader.onerror = error => reject(error);
+			});
+			
+			try {
+				const passportImage = await toBase64(passportFile);
+				const statsImage = await toBase64(statsFile);
+				
+				// Отправляем на сервер
+				const response = await fetch('/api/register', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						username,
+						passportImage,
+						statsImage
+					})
+				});
+				
+				const result = await response.json();
+				
+				if (result.success) {
+					const message = document.getElementById('registerMessage');
+					message.style.display = 'block';
+					message.style.background = 'rgba(68, 255, 68, 0.1)';
+					message.style.border = '1px solid #44FF44';
+					message.style.color = '#44FF44';
+					message.innerHTML = `
+						<i class="fas fa-check-circle"></i> Заявка отправлена!<br>
+						<small>Ожидайте проверки администрацией. Обычно это занимает до 24 часов.</small>
+					`;
+					
+					// Очищаем форму
+					document.getElementById('registerForm').reset();
+					
+					// Прокручиваем к сообщению
+					message.scrollIntoView({ behavior: 'smooth' });
+				} else {
+					alert('Ошибка при отправке заявки');
+				}
+				
+			} catch (error) {
+				console.error('Ошибка:', error);
+				alert('Ошибка при отправке заявки');
+			}
+		});
+    </script>
+</body>
+</html>

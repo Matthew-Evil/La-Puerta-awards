@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Победители | La Puerta Awards</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/winners.css">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-maracas"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>La Puerta Awards</h1>
+                        <p>Победители 2025</p>
+                    </div>
+                </div>
+
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="index.html" class="nav-link">Главная</a></li>
+                        <li><a href="nominations.html" class="nav-link">Номинации</a></li>
+                        <li><a href="voting.html" class="nav-link">Голосование</a></li>
+                        <li><a href="winners.html" class="nav-link active">Победители</a></li>
+                        <li><a href="admin-login.html" class="nav-link" style="color: #FF4444;">Админ</a></li>
+                    </ul>
+                </nav>
+
+                <div class="user-widget">
+                    <div class="user-icon" id="userIcon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Герой-секция с конфетти -->
+            <div class="hero-winners">
+                <div class="confetti">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <h1 class="hero-title">🏆 LA PUERTA AWARDS 2025</h1>
+                <p class="hero-subtitle">Победители голосования</p>
+            </div>
+
+            <!-- Информация о награждении -->
+            <div class="ceremony-info" id="ceremonyInfo">
+                <div class="info-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="info-content">
+                        <span class="info-label">Дата награждения</span>
+                        <span class="info-value" id="ceremonyDate">Скоро будет объявлено</span>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="info-content">
+                        <span class="info-label">Место проведения</span>
+                        <span class="info-value" id="ceremonyPlace">La Puerta, Главная площадь</span>
+                    </div>
+                </div>
+                <div class="info-card prize-card">
+                    <i class="fas fa-trophy"></i>
+                    <div class="info-content">
+                        <span class="info-label">Призовой фонд</span>
+                        <span class="info-value" id="prizeAmount">100,000$</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Список победителей -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-crown"></i>
+                    Победители в номинациях
+                </h2>
+                
+                <div class="winners-grid" id="winnersGrid">
+                    <!-- Победители будут загружены через JavaScript -->
+                    <div class="loading-winners">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Загрузка победителей...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Благодарность участникам -->
+            <div class="thanks-section">
+                <i class="fas fa-heart"></i>
+                <h3>Спасибо всем, кто участвовал в голосовании!</h3>
+                <p>Всего проголосовало: <strong id="totalVoters">0</strong> человек</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-maracas"></i>
+                    <span>La Puerta RP</span>
+                </div>
+                <p>&copy; 2025 La Puerta Awards. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/winners.js"></script>
+</body>
+</html>

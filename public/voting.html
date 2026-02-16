@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Голосование | La Puerta Awards</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/voting.css">
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-maracas"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>La Puerta Awards</h1>
+                        <p>Этап 2: Финальное голосование</p>
+                    </div>
+                </div>
+
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="index.html" class="nav-link">Главная</a></li>
+                        <li><a href="nominations.html" class="nav-link">Номинации</a></li>
+                        <li><a href="voting.html" class="nav-link active">Голосование</a></li>
+                        <li><a href="winners.html" class="nav-link">Победители</a></li>
+                        <li><a href="admin-login.html" class="nav-link" style="color: #FF4444;">Админ</a></li>
+                    </ul>
+                </nav>
+
+                <div class="user-widget">
+                    <div class="user-icon" id="userIcon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Статус этапа -->
+            <div class="stage-header" id="stageHeader">
+                <div class="stage-info">
+                    <div class="stage-badge" id="stageBadge">⏳ Этап 2</div>
+                    <h2 class="stage-title" id="stageTitle">Финальное голосование</h2>
+                    <p class="stage-description" id="stageDescription">
+                        Выберите по одному кандидату в каждой категории
+                    </p>
+                </div>
+                
+                <div class="timer-container" id="timerContainer">
+                    <div class="timer" id="stageTimer">
+                        <div class="timer-label">До окончания голосования:</div>
+                        <div class="timer-display">
+                            <div class="time-unit">
+                                <span class="time-value" id="days">00</span>
+                                <span class="time-label">дней</span>
+                            </div>
+                            <div class="time-separator">:</div>
+                            <div class="time-unit">
+                                <span class="time-value" id="hours">00</span>
+                                <span class="time-label">часов</span>
+                            </div>
+                            <div class="time-separator">:</div>
+                            <div class="time-unit">
+                                <span class="time-value" id="minutes">00</span>
+                                <span class="time-label">минут</span>
+                            </div>
+                            <div class="time-separator">:</div>
+                            <div class="time-unit">
+                                <span class="time-value" id="seconds">00</span>
+                                <span class="time-label">секунд</span>
+                            </div>
+                        </div>
+                        <div class="timer-message" id="timerMessage"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правила голосования -->
+            <div class="rules-card" id="rulesCard">
+                <h3><i class="fas fa-info-circle"></i> Правила голосования</h3>
+                <ul class="rules-list">
+                    <li><i class="fas fa-check"></i> В каждой категории можно проголосовать <strong>только за 1 кандидата</strong></li>
+                    <li><i class="fas fa-check"></i> Голос <strong>нельзя изменить</strong> после подтверждения</li>
+                    <li><i class="fas fa-check"></i> Голосовать могут только <strong>подтвержденные пользователи</strong></li>
+                    <li><i class="fas fa-check"></i> Победители определяются по <strong>наибольшему количеству голосов</strong></li>
+                    <li><i class="fas fa-check"></i> При равенстве голосов решение принимает администрация</li>
+                </ul>
+            </div>
+
+            <!-- Затемнение для неактивного этапа -->
+            <div class="voting-overlay" id="votingOverlay" style="display: none;">
+                <div class="overlay-content">
+                    <i class="fas fa-clock"></i>
+                    <h3>Голосование еще не началось</h3>
+                    <p id="startDateMessage">Дата начала будет объявлена администрацией</p>
+                </div>
+            </div>
+
+            <!-- Категории для голосования -->
+            <div class="section">
+                <h2 class="section-title">Категории для голосования</h2>
+                
+                <div id="categoriesContainer">
+                    <!-- Категории будут загружены динамически -->
+                    <div class="loading-categories">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Загрузка категорий...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно подтверждения голоса -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal modal-confirm">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle" style="color: #FFA500;"></i>
+                    Подтверждение голоса
+                </h3>
+                <button class="modal-close" id="closeConfirmBtn">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <p class="confirm-text">Вы собираетесь проголосовать за:</p>
+                
+                <div class="candidate-preview" id="candidatePreview">
+                    <div class="candidate-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="candidate-info">
+                        <div class="candidate-name" id="confirmCandidateName">Имя Фамилия</div>
+                        <div class="candidate-category" id="confirmCategoryName">Категория</div>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>
+                        <strong>Внимание!</strong>
+                        <p>После подтверждения <u>изменить голос будет невозможно</u>. Вы уверены?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelConfirmBtn">Отмена</button>
+                <button class="btn btn-primary" id="submitVoteBtn">
+                    <i class="fas fa-check-circle"></i> Да, подтверждаю
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно успеха -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal modal-success">
+            <div class="modal-header" style="border-bottom-color: #44FF44;">
+                <h3 class="modal-title" style="color: #44FF44;">
+                    <i class="fas fa-check-circle"></i>
+                    Голос принят!
+                </h3>
+                <button class="modal-close" id="closeSuccessBtn">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="success-content">
+                    <i class="fas fa-vote-yea success-icon"></i>
+                    <p>Ваш голос успешно учтен в системе.</p>
+                    <p class="success-note">Спасибо за участие в голосовании!</p>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeSuccessBtn2">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-maracas"></i>
+                    <span>La Puerta RP</span>
+                </div>
+                <p>&copy; 2025 La Puerta Awards. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/voting.js"></script>
+</body>
+</html>

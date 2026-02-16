@@ -1,0 +1,67 @@
+{
+  "stage1": {
+    "startDate": null,
+    "endDate": null,
+    "durationDays": 14,
+    "status": "waiting"
+  },
+  "stage2": {
+    "startDate": null,
+    "endDate": null,
+    "durationDays": 7,
+    "status": "inactive"
+  },
+  "stage3": {
+    "startDate": null,
+    "status": "inactive"
+  },
+  "currentStage": 1,
+  "siteTitle": "La Puerta Awards 2025"
+}  
+{
+  "stage1": {
+    "startDate": null,
+    "endDate": null,
+    "durationDays": 14,
+    "status": "waiting"
+  },
+  "stage2": {
+    "startDate": null,
+    "endDate": null,
+    "durationDays": 7,
+    "status": "inactive"
+  },
+  "stage3": {
+    "startDate": null,
+    "status": "inactive"
+  },
+  "currentStage": 1,
+  "siteTitle": "La Puerta Awards 2025",
+  "updatedAt": "2025-02-08T10:00:00.000Z"
+}
+{
+  "stage1": {
+    "startDate": null,
+    "endDate": null,
+    "durationDays": 14,
+    "status": "waiting"
+  },
+  "stage2": {
+    "startDate": null,
+    "endDate": null,
+    "durationDays": 7,
+    "status": "inactive"
+  },
+  "stage3": {
+    "startDate": null,
+    "status": "inactive"
+  },
+  "ceremony": {
+    "date": "Скоро будет объявлено",
+    "place": "La Puerta, Главная площадь"
+  },
+  "prizeAmount": 100000,
+  "currentStage": 1,
+  "siteTitle": "La Puerta Awards 2025",
+  "updatedAt": "2025-02-08T10:00:00.000Z"
+}
